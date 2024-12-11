@@ -3,7 +3,8 @@ const path = require('path');
 const HTMLWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
-  entry: './src/index.js',
+  entry: './src/client/index.tsx',
+  //   src/client/index.tsx
 
   output: {
     path: path.join(__dirname, '/dist'),
@@ -15,7 +16,7 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /.js$/,
+        test: /\.(js|jsx)$/,
         exclude: /node_modules/,
         use: {
           loader: 'babel-loader',
@@ -31,6 +32,17 @@ module.exports = {
       },
     ],
   },
-  resolve: { 
-    extensions: ['.tsx', '.ts', '.jsx', '.js'] },
+  resolve: {
+    extensions: ['.tsx', '.ts', '.jsx', '.js'],
+  },
+  devServer: {
+    static: {
+      directory: path.join(__dirname, './dist'),
+    },
+    port: '8000',
+    // proxy: {
+    //   '/api': 'http://localhost:3000',
+    //   secure: false,
+    // }, DEAL WITH LATER
+  },
 };

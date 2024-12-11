@@ -6,4 +6,4 @@ const workOutSchema = new mongoose.Schema({
   reps: { type: Number, required: true },
 });
 
-module.exports = mongoose.model('WorkOut', workOutSchema);
+export const workout = mongoose.model('workout', workOutSchema);
