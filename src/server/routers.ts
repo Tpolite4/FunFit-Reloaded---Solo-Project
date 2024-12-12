@@ -16,3 +16,7 @@ workOutRouter.patch('/', workOutController.updateWorkOut, (req, res) => {
 workOutRouter.delete('/', workOutController.deleteWorkOut, (req, res) => {
   res.status(200).json({});
 });
+
+// workOutRouter.load('/', workOutController.loadInitialWorkOut, (req, res) => {
+//     res.status(200).json({});
+//   });

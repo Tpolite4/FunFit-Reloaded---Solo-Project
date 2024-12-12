@@ -5,6 +5,7 @@ import express, { Request, Response } from 'express';
 import path from 'path';
 // import { workOutRouter } from '../routers';
 import mongoose, { ConnectOptions } from 'mongoose';
+import { workOutController } from './WorkOutController';
 
 const app = express();
 const Port = 3000;
@@ -12,7 +13,6 @@ const mongoURI =
   process.env.MONGO_URI ||
   'mongodb+srv://username:password@cluster.mongodb.net/defaultDB?retryWrites=true&w=majority';
 
-  
 async function run() {
   try {
     // Create a Mongoose client with a MongoClientOptions object to set the Stable API version
@@ -22,6 +22,9 @@ async function run() {
       //   serverApi: { version: '1', strict: true, deprecationErrors: true },
     } as ConnectOptions);
     console.log('Connected to MongoDB');
+    workOutController.loadInitialWorkOuts({}, {}, (err) => {
+      if (err) console.error(err);
+    });
   } finally {
     // Ensures that the client will close when you finish/error
     await mongoose.disconnect();
@@ -44,14 +47,14 @@ run().catch(console.dir);
 
 // Unknown route handler
 
-app.use((req, res) => res.sendStatus(404))
+app.use((req, res) => res.sendStatus(404));
 
 // Global error handler
-app.use((err,req,res,next) => {
+app.use((err, req, res, next) => {
   const defaultErr = {
     log: 'Express error handler caught unknown middleware error',
     status: 500,
-    message: {err: 'An error occurred'}
+    message: { err: 'An error occurred' },
   };
   const errorObj = Object.assign({}, defaultErr, err);
   console.log(errorObj.log);
