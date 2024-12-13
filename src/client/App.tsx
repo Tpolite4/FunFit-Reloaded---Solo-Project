@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import './styles.css';
 import Header from './components/Header';
+// import CartoonFlex from './assets/cartoon-flex.png';
 
 // interface AppProps {
 //   message: string;
@@ -17,6 +18,7 @@ class App extends Component {
           through learning both front-end and back-end web development without
           crashing out.
         </p>
+        {/* <img src={CartoonFlex} alt='Cartoon Flex' /> */}
       </div>
     );
   }
