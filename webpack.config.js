@@ -30,6 +30,10 @@ module.exports = {
         exclude: /node_modules/,
         use: ['ts-loader'],
       },
+      {
+        test: /\.css$/i,
+        use: [{ loader: 'css-loader', options: { url: false } }],
+      },
     ],
   },
   resolve: {

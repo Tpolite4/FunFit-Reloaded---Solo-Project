@@ -3,7 +3,7 @@ dotenv.config({ path: './.env' });
 
 import express, { Request, Response } from 'express';
 import path from 'path';
-// import { workOutRouter } from '../routers';
+import workOutRouter from './routers';
 import mongoose, { ConnectOptions } from 'mongoose';
 import { workOutController } from './WorkOutController';
 
@@ -13,41 +13,60 @@ const mongoURI =
   process.env.MONGO_URI ||
   'mongodb+srv://username:password@cluster.mongodb.net/defaultDB?retryWrites=true&w=majority';
 
-async function run() {
-  try {
-    // Create a Mongoose client with a MongoClientOptions object to set the Stable API version
-    await mongoose.connect(mongoURI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      //   serverApi: { version: '1', strict: true, deprecationErrors: true },
-    } as ConnectOptions);
+mongoose
+  .connect(mongoURI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    //   serverApi: { version: '1', strict: true, deprecationErrors: true },
+  } as ConnectOptions)
+  .then(() => {
     console.log('Connected to MongoDB');
+    //Load initial workouts after database connection
     workOutController.loadInitialWorkOuts({}, {}, (err) => {
       if (err) console.error(err);
     });
-  } finally {
-    // Ensures that the client will close when you finish/error
-    await mongoose.disconnect();
-  }
-}
-run().catch(console.dir);
+  })
+  .catch((err) => console.error('MongoDB connection error'));
+
+// middleware to parse incoming requests with JSON payloads
+app.use(express.json());
+
+// explicitly send the index.html file for the root route
+app.get('/', (req, res) => {
+  res.sendFile(path.resolve(__dirname, './public/index.html'));
+});
+
+app.use('/workouts', workOutRouter);
 
 // const mongoURI =
 //   'mongodb+srv://tpolite4:VYG5OVPMZQHLHijO@cluster0.ekuew.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
 
-// mongoose
-//   .connect
-//   .then(() => {
+// async function run() {
+//   try {
+//     // Create a Mongoose client with a MongoClientOptions object to set the Stable API version
+//     await mongoose.connect(mongoURI, {
+//       useNewUrlParser: true,
+//       useUnifiedTopology: true,
+//       //   serverApi: { version: '1', strict: true, deprecationErrors: true },
+// //     } as ConnectOptions);
 //     console.log('Connected to MongoDB');
-//     //Load initial workouts after database connection
-//     //WorkOutController.loadWorkOut({},{}, (err => {
-//     //if (err) console.error(err);})
-//   })
-//   .catch((err) => console.error('MongoDB connection error'));
+//     workOutController.loadInitialWorkOuts({}, {}, (err) => {
+//       if (err) console.error(err);
+//     });
+//   } catch (err) {
+//     // Ensures that the client will close when you finish/error
+//     console.error('Error connecting to MongoDB', err);
+//   }
+// }
+// run().catch(console.dir);
 
 // Unknown route handler
 
 app.use((req, res) => res.sendStatus(404));
+
+// app.get('/', (_req, _res) => {
+//   _res.send('TypeScript With Express');
+// });
 
 // Global error handler
 app.use((err, req, res, next) => {
